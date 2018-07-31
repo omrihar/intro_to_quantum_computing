@@ -29,6 +29,10 @@
 
 3. Famous experiments (Double slit, Young, Stern-Gerlach)
 
+4. [No-cloning theorem](1) and no-deletion theorem.
+
+[1]: https://www.wikiwand.com/en/No-cloning_theorem
+
 ## Spins and Qubits
 
 1. Simple two-state systems
