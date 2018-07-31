@@ -4,7 +4,7 @@
 
 1. Why would we want quantum computers anyway? (Shor's algorithm, etc...)
 
-2. Current state of the art - D-Wave, IBM's Quantum Computer, results from 
+2. Current state of the art - D-Wave, IBM's Q Experience, results from 
    China, etc...
 
 ## Pre-requisites - linear algebra (?)
@@ -33,6 +33,12 @@
 
 [1]: https://www.wikiwand.com/en/No-cloning_theorem
 
+## Quantum vs. Classical
+
+1. Representations of classical and quantum bits
+
+2. Computations with Qubits
+
 ## Spins and Qubits
 
 1. Simple two-state systems
@@ -44,6 +50,7 @@
     - Hadamard
     - CNOT
     - Measurement
+    - Pauli operators
 
 ## Algorithms
 
