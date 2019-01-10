@@ -17,6 +17,12 @@ header-includes: |
    \providecommand{\shrug}{{\myfont ツ}}
    \newcommand{\zero}{\begin{pmatrix}1 \\ 0\end{pmatrix}}
    \newcommand{\one}{\begin{pmatrix}0 \\ 1\end{pmatrix}}
+   \newcommand{\cnot}{\pmat{1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 
+   0 & 0 & 1 & 0}}
+   \newcommand{\zerozero}{\pmat{1 \\ 0 \\ 0 \\ 0}}
+   \newcommand{\zeroone}{\pmat{0 \\ 1 \\ 0 \\ 0}}
+   \newcommand{\onezero}{\pmat{0 \\ 0 \\ 1 \\ 0}}
+   \newcommand{\oneone}{\pmat{0 \\ 0 \\ 0 \\ 1}}
    \newcommand{\phase}[2]{$\begin{pmatrix}#1 \\ #2 \end{pmatrix}$}
    \newcommand{\pmat}[1]{\begin{pmatrix}#1\end{pmatrix}}
    \setlength{\tabcolsep}{15pt}
@@ -49,9 +55,9 @@ themeoptions:
 
 - Uses the rules of quantum mechanics
 
-- __Might__ be able to solve __some__ problems exponentially faster
+- \alert{Might} be able to solve \alert{some} problems exponentially faster
 
-- __Definitely__ could simulate quantum systems better
+- \alert{Definitely} could simulate quantum systems better
 
 - Realizable in large scale?
 
@@ -111,6 +117,10 @@ quantum decoherence
 One bit with value $0$, also written as $\ket{0}$ (Dirac vector notation)
 
 \qquad $\zero$
+
+\ 
+
+\ 
 
 One bit with value $1$, also written as $\ket{1}$
 
@@ -179,22 +189,20 @@ Constant-1 & $f(x) = 1$ & \scalebox{0.6}{$\pmat{0 & 0 \\ 1 & 1}\pmat{1 \\
 
 ## Reversible computing
 
-::: {.incremental}
 - Given the operation and the input, you can always infer the output.
    - For $Ax = b$, given $b$ and $A$, you can uniquely find $x$.
 
-\ 
+. . .
 
 - Permutations are reversible; erasing and overwriting are not
    - Identity and negation are reversible.
    - Constant-0 and Constant-1 are not reversible.
 
-\ 
+. . .
 
-- Quantum computers only use reversible operations.
+- Quantum computers use \alert{only reversible operations}.
    - In fact, all quantum operations are their own inverse.
 
-:::
 
 ## Review: tensor product of vectors
 
@@ -253,21 +261,22 @@ x_1y_0\\x_1y_1}$}
 :::
 :::::
 
-- The tensor representation is called the __product state__.
+- The tensor representation is called the \alert{product state}.
 
-- It can be __factored__ back into the __individual state__ representation.
+- It can be \alert{factored} back into the \alert{individual state} 
+  representation.
 
 - The product state of $n$ bits is a vector of size $2^n$.
 
-## Operations on multiple cbits: CNOT
+## Operations on multiple cbits: CNOT 
 
-- Takes two bits, one "control" bit and one"target" bit.
+- Takes two bits, one \alert{control} bit and one \alert{target} bit.
 
-- If the "control" bit is set, flip the "target" bit, otherwise leave it.
-
-- If most significant bit is control, and least-significant is target, then:
+- If the control bit is set, flip the target bit, otherwise leave it.
 
 . . .
+
+- If most significant bit is control, and least-significant is target, then:
 
 ::::: {.columns}
 
@@ -296,8 +305,87 @@ width=2em]
 
 \uncover<7->{
 \vspace{10pt}
-\scalebox{1.0}{$C = \pmat{1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 
-& 0 & 1 & 0}$}}
+\scalebox{1.0}{$C = \cnot$}}
 :::
 :::::
 
+## Operations on multiple cbits: CNOT
+
+\scalebox{0.8}{$C\ket{10} = C\left(\one\otimes\zero \right) = \cnot\onezero = 
+\oneone = \one\otimes\one = \ket{11}$}
+
+\hspace{30pt}
+
+\scalebox{0.8}{$C\ket{11} = C\left(\one\otimes\one \right) = \cnot\oneone = 
+\onezero = \one\otimes\zero = \ket{10}$}
+
+## Operations on multiple cbits: CNOT
+
+\scalebox{0.8}{$C\ket{00} = C\left(\zero\otimes\zero \right) = \cnot\zerozero = 
+\zerozero = \zero\otimes\zero = \ket{00}$}
+
+\hspace{30pt}
+
+\scalebox{0.8}{$C\ket{01} = C\left(\zero\otimes\one \right) = \cnot\zeroone = 
+\zeroone = \zero\otimes\one = \ket{01}$}
+
+
+## Qubits and superposition
+
+- Cbits are a special case of Qubits!
+
+- A qbit is represented by \scalebox{0.5}{$\pmat{a \\ b}$} where $a$ and $b$ 
+  are \alert{complex numbers} such that $||a||^2 + ||b||^2=1$.
+
+   - The cbit vectors \scalebox{0.5}{$\zero$} and \scalebox{0.5}{$\one$} fit 
+     this definition. 
+
+- Example qbit values:
+
+\begin{equation*}
+\pmat{\frac{1}{\sqrt{2}}\\{\frac{1}{\sqrt{2}}}} \qquad 
+\pmat{\frac{1}{2}\\{\frac{\sqrt{3}}{2}}} \qquad \pmat{-1\\0} \qquad 
+\pmat{\frac{1}{\sqrt{2}}\\{\frac{-1}{\sqrt{2}}}}
+\end{equation*}
+
+## Qbits and superposition 
+
+### What does that mean?
+
+. . .
+
+\metroset{block=fill}
+\begin{block}{Superposition}
+The qbit is in a state of both $\ket{0}$ and $\ket{1}$. We can write this as:
+
+\scalebox{0.8}{$\pmat{a\\b} = a\zero + b\one = a\ket{0} + b\ket{1}.$}
+\end{block}
+
+. . .
+
+\begin{block}{Amplitudes}
+$a$ and $b$ are called amplitudes. $||a||^2$ is the probability of
+the qbit being $0$ when \alert{measured}; $||b||^2$ is the probability of
+measuring $1$.
+\end{block}
+
+. . . 
+
+\begin{block}{Measurement}
+The measurement of the qbit \alert{collapses} its state. It will be in the
+state $\ket{0}$ if we measured $0$ and $\ket{1}$ if we measured $1$. 
+\end{block}
+
+
+## Qbits and superposition
+
+\metroset{block=fill}
+\begin{exampleblock}{For example}
+The qbit \scalebox{0.7}{$\pmat{\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}}}$} has 
+a $\left|\left|\frac{1}{\sqrt{2}}\right|\right|^2 = \frac{1}{2}$ chance of 
+collapsing to $\ket{0}$ or $\ket{1}$.
+
+The qbit \scalebox{0.7}{$\zero$} has $100\%$ chance of collapsing to $\ket{0}$, 
+and \scalebox{0.7}{$\one$} has a $100\%$ chance of collapsing to $\ket{1}$.
+
+\end{exampleblock}
