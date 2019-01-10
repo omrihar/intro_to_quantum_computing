@@ -19,4 +19,4 @@
 9. Schor's algorithm and other algorithms
 10. Quantum cryptography
 
-## Demo (either Q# or quantumexperience or python q-library thingie)
+## Demo (either Q# or QuantumExperience or python q-library thingie)
