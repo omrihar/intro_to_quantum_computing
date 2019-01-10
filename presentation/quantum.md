@@ -10,6 +10,9 @@ header-includes: |
    \usepackage{amssymb}
    \usepackage{braket}
    \usepackage{graphicx}
+   \usepackage{epigraph}
+   \usepackage{tikz}
+   \usetikzlibrary{matrix}
    \newfontfamily\myfont{VL Gothic}
    \providecommand{\shrug}{{\myfont ツ}}
    \newcommand{\zero}{\begin{pmatrix}1 \\ 0\end{pmatrix}}
@@ -88,6 +91,10 @@ quantum decoherence
 :::
 
 # The Technical Part
+
+## 
+
+\epigraph{``Shut up and calculate''}{David Mermin}
 
 ## Overview
 
@@ -217,3 +224,80 @@ x_1y_0\\x_1y_1}$}
 \pmat{0\\0\\0\\0\\0\\0\\1\\0}$}
 :::
 :::::
+
+
+## Representing multiple cbits
+
+::::: {.columns}
+
+::: {.column width="33%"}
+\scalebox{0.7}{$\ket{00} = \zero\otimes\zero = \pmat{1\\0\\0\\0}$}
+
+\ 
+
+\scalebox{0.7}{$\ket{10} = \one\otimes\zero = \pmat{0\\0\\1\\0}$}
+:::
+
+::: {.column width="33%"}
+\scalebox{0.7}{$\ket{01} = \zero\otimes\one = \pmat{0\\1\\0\\0}$}
+
+\ 
+
+\scalebox{0.7}{$\ket{11} = \one\otimes\one = \pmat{0\\0\\0\\1}$}
+:::
+::: {.column width="33%"}
+
+\scalebox{0.6}{$\ket{100} = \one\otimes\zero\otimes\zero = 
+\pmat{0\\0\\0\\0\\1\\0\\0\\0}$}
+
+:::
+:::::
+
+- The tensor representation is called the __product state__.
+
+- It can be __factored__ back into the __individual state__ representation.
+
+- The product state of $n$ bits is a vector of size $2^n$.
+
+## Operations on multiple cbits: CNOT
+
+- Takes two bits, one "control" bit and one"target" bit.
+
+- If the "control" bit is set, flip the "target" bit, otherwise leave it.
+
+- If most significant bit is control, and least-significant is target, then:
+
+. . .
+
+::::: {.columns}
+
+::: {.column width="50%"}
+
+\hspace{30pt}
+\begin{tikzpicture}[ampersand replacement=\&]
+  \matrix (m) [matrix of math nodes,row sep=.5em,column sep=4em,minimum 
+width=2em]
+  {
+    \ket{00} \& \ket{00} \\
+    \ket{01} \& \ket{01} \\
+    \ket{10} \& \ket{10} \\
+    \ket{11} \& \ket{11} \\
+   };
+
+   \uncover<3->{\draw[->] (m-1-1) -- (m-1-2);}
+   \uncover<4->{\draw[->] (m-2-1) -- (m-2-2);}
+   \uncover<5->{\draw[red,->] (m-3-1) -- (m-4-2);}
+   \uncover<6->{\draw[red,->] (m-4-1) -- (m-3-2);}
+\end{tikzpicture}
+
+:::
+
+::: {.column width="50%"}
+
+\uncover<7->{
+\vspace{10pt}
+\scalebox{1.0}{$C = \pmat{1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 
+& 0 & 1 & 0}$}}
+:::
+:::::
+
