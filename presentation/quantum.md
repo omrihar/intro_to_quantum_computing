@@ -12,6 +12,8 @@ header-includes: |
    \usepackage{graphicx}
    \usepackage{epigraph}
    \usepackage{tikz}
+   \usepackage{tikzpeople}
+   \usepackage{makecell}
    \usetikzlibrary{matrix}
    \newfontfamily\myfont{VL Gothic}
    \providecommand{\shrug}{{\myfont ツ}}
@@ -23,9 +25,12 @@ header-includes: |
    \newcommand{\zeroone}{\pmat{0 \\ 1 \\ 0 \\ 0}}
    \newcommand{\onezero}{\pmat{0 \\ 0 \\ 1 \\ 0}}
    \newcommand{\oneone}{\pmat{0 \\ 0 \\ 0 \\ 1}}
-   \newcommand{\phase}[2]{$\begin{pmatrix}#1 \\ #2 \end{pmatrix}$}
+   \newcommand{\phase}[2]{\begin{pmatrix}#1 \\ #2 \end{pmatrix}}
    \newcommand{\pmat}[1]{\begin{pmatrix}#1\end{pmatrix}}
+   \newcommand{\sqrtt}{\frac{1}{\sqrt{2}}}
    \setlength{\tabcolsep}{15pt}
+   \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
+   \newcommand{\rawalert}[1]{{\usebeamercolor[fg]{alerted text} #1}}
 themeoptions:
    - titleformat=regular
    - numbering=fraction
@@ -65,36 +70,140 @@ themeoptions:
 
 :::
 
-::: notes
+## Disclaimer
 
-5 years old
+- Quantum Computing is technical
 
-Calculates things in a totally different way from how your computer does
+- Quantum Algorithms are hard
 
-with QC we have different rules (spin a coin sideways)
+- Quantum Mechanics is weird
 
-motivation - simulating nature (discover new things)
+- Quantum Mechanics is technical
 
-15 years old
+##
 
-computer runs out of space
+\begin{center}
+\Huge Examples?
+\end{center}
 
-Quantum mechanics is a theory ...
+## Example: the RSA algorithm
 
-superposition - what is a penny at WHILE ITS SPINNING 
+\begin{center}
+\begin{tikzpicture}[ampersand replacement=\&, font=\small]
+\uncover<1->{\node[alice,female,minimum size=1.5cm] (A) {Alice};}
+\uncover<2->{\node[bob,right=3cm of A,minimum size=1.5cm,mirrored] (B) {Bob};}
+\uncover<3-4>{\draw (A.east) edge[->]  node[above] {"Hello Bob"} (B.west);}
+\uncover<4>{\node[devil, right of=A,minimum size=1.5cm, below=1cm of A] 
+(C){Devil};}
+\uncover<5-6>{\draw (B.270) ++ (0, -1.0) node {\makecell{Generate 
+Public/Private keys\\$e$, $d$, $N=pq$}};}
+\uncover<6>{\draw (A.east) edge[<-]  node[above] {"Public Key: $e$, $N$"} 
+(B.west);}
+\uncover<7->{\draw (A.270) ++(0, -1.0) node 
+{\makecell{$m=\mathrm{encode}(\text{"Hello World"})$\\$c = m^e\mod{N}$}};}
+\uncover<8->{\draw (A.east) edge[->] node[above] {$c$} (B.west);}
+\uncover<9->{\draw (B.270) ++(0, -1.0) node {\makecell{$m = 
+c^d\mod{N}$\\$\mathrm{decode}(m)$}} ;}
+\end{tikzpicture}
+\end{center}
 
-entanglement - measure the pennies at the same time
+## Example: the RSA algorithm - outline
 
-undergrad
+It's \alert{easy} to find $e, d, N \in \mathbb{N}$, such that:
 
-interference - amplify signlas towards the right answer and reduce signals 
-towards the wrong answer
+. . .
 
-grad student (cs)
+\begin{equation*}
+\boxed{(m^e)^d \equiv m \Mod{N}}
+\end{equation*}
 
-quantum decoherence
+. . .
+
+::: incremental
+
+- $N = pq$ with $p$, $q$ large prime numbers.
+
+- $e$, $N$ - Public Key
+
+- $d$, $N$ - Private Key
 
 :::
+
+. . .
+
+But it's \alert{hard} to find $p$, $q$, such that $pq = N$.
+
+## Example: the RSA algorithm - Factorizing is Hard
+
+### Factorizing on a Classical Computer
+
+\vspace{1em}
+
+\begin{tabular}{clp{5cm}}
+\alert{Bits} & \alert{Time} & {\textcolor{mLightBrown}{Notes}}\\ \hline
+128 & less than 2 seconds \\
+192 & 16 seconds \\
+256 & 35 minutes \\
+260 & 1 hour \\
+512 & 73 days & in 2009\\
+\uncover<2->{
+\alert{768} & \alert{1500 CPU years} & {\textcolor{mLightBrown}{Largest known 
+(2010), took 2 years on hundreds of computers}}}
+\end{tabular}
+
+\vspace{1em}
+\uncover<3->{Most RSA implementations use between \alert{1024} and \alert{4096} 
+bits.}
+
+## Example: the RSA algorithm - Shor's Algorithm
+
+![Peter W. Shor](images/peter_w_shor.jpg)
+
+## Example: the RSA algorithm - Shor's Algorithm
+
+\begin{center}
+\includegraphics[height=0.8\textheight]{images/peter_w_shor.jpg}
+\end{center}
+
+Would require $\sim 4000$ qubits to break $2048$-bit RSA
+
+## Basics of Quantum Mechanics (simplified)
+
+::: incremental
+
+- The system is in a state ($\psi(t) = \ket{\psi}$).
+
+- The state can be a superposition of \alert{measureable} states (e.g. 
+  $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$).
+
+\only<2>{
+\begin{center}
+\begin{tikzpicture}
+    \draw [<->] (0,2) -- (0, 0) -- (2, 0);
+    \node at (2, -0.3) {$\ket{0}$};
+    \node at (-0.3, 2) {$\ket{1}$};
+    \draw [->,thick] (0, 0) -- (45:1);
+    \draw [->,thick] (0, 0) -- (0, 1);
+    \draw [->,thick] (0, 0) -- (1, 0);
+    \node[anchor=south west] at (70:0.8) {\scalebox{0.7}{ 
+        $\ket{\psi}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$}};
+\end{tikzpicture}
+\end{center}
+}
+
+- The time evolution of the state is \alert{reversible}.
+
+- When you measure the system, the result is probabilistic (e.g. probability of 
+  measuring $0$ is $\alpha^2$ and $1$ is $\beta^2$).
+
+- After the measurement, the state \alert{collapses} to the measured outcome 
+  ($\ket{0}$ or $\ket{1}$).
+
+- It is impossible to clone the state of the system (no-cloning theorem).
+
+:::
+
+# Movie
 
 # The Technical Part
 
@@ -334,13 +443,13 @@ width=2em]
 
 - Cbits are a special case of Qubits!
 
-- A qbit is represented by \scalebox{0.5}{$\pmat{a \\ b}$} where $a$ and $b$ 
+- A qubit is represented by \scalebox{0.5}{$\pmat{a \\ b}$} where $a$ and $b$ 
   are \alert{complex numbers} such that $||a||^2 + ||b||^2=1$.
 
    - The cbit vectors \scalebox{0.5}{$\zero$} and \scalebox{0.5}{$\one$} fit 
      this definition. 
 
-- Example qbit values:
+- Example qubit values:
 
 \begin{equation*}
 \pmat{\frac{1}{\sqrt{2}}\\{\frac{1}{\sqrt{2}}}} \qquad 
@@ -348,7 +457,7 @@ width=2em]
 \pmat{\frac{1}{\sqrt{2}}\\{\frac{-1}{\sqrt{2}}}}
 \end{equation*}
 
-## Qbits and superposition 
+## Qubits and superposition 
 
 ### What does that mean?
 
@@ -356,7 +465,7 @@ width=2em]
 
 \metroset{block=fill}
 \begin{block}{Superposition}
-The qbit is in a state of both $\ket{0}$ and $\ket{1}$. We can write this as:
+The qubit is in a state of both $\ket{0}$ and $\ket{1}$. We can write this as:
 
 \scalebox{0.8}{$\pmat{a\\b} = a\zero + b\one = a\ket{0} + b\ket{1}.$}
 \end{block}
@@ -365,27 +474,85 @@ The qbit is in a state of both $\ket{0}$ and $\ket{1}$. We can write this as:
 
 \begin{block}{Amplitudes}
 $a$ and $b$ are called amplitudes. $||a||^2$ is the probability of
-the qbit being $0$ when \alert{measured}; $||b||^2$ is the probability of
+the qubit being $0$ when \alert{measured}; $||b||^2$ is the probability of
 measuring $1$.
 \end{block}
 
 . . . 
 
 \begin{block}{Measurement}
-The measurement of the qbit \alert{collapses} its state. It will be in the
-state $\ket{0}$ if we measured $0$ and $\ket{1}$ if we measured $1$. 
+The measurement of the qubit \alert{collapses} its state. It will be in the
+state $\ket{0}$ if we measured $0$ and $\ket{1}$ if we measured $1^\dagger$.
 \end{block}
 
 
-## Qbits and superposition
+## Qubits and superposition
 
 \metroset{block=fill}
 \begin{exampleblock}{For example}
-The qbit \scalebox{0.7}{$\pmat{\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}}}$} has 
-a $\left|\left|\frac{1}{\sqrt{2}}\right|\right|^2 = \frac{1}{2}$ chance of 
-collapsing to $\ket{0}$ or $\ket{1}$.
+The qubit \scalebox{0.7}{$\pmat{\sqrtt \\ \sqrtt}$} has a 
+$\left|\left|\sqrtt\right|\right|^2 = \frac{1}{2}$ chance of collapsing to 
+$\ket{0}$ or $\ket{1}$.
 
-The qbit \scalebox{0.7}{$\zero$} has $100\%$ chance of collapsing to $\ket{0}$, 
-and \scalebox{0.7}{$\one$} has a $100\%$ chance of collapsing to $\ket{1}$.
+The qubit \scalebox{0.7}{$\zero$} has $100\%$ chance of collapsing to 
+$\ket{0}$, and \scalebox{0.7}{$\one$} has a $100\%$ chance of collapsing to 
+$\ket{1}$.
 
 \end{exampleblock}
+
+## Qubits and Superposition
+
+- Multiple qubits are represented by the tensor product: 
+  \scalebox{0.7}{$\phase{a}{b}\otimes\phase{c}{d}=\pmat{ab\\ad\\bc\\bd}$}
+  with $||ac||^2 + ||ad||^2+||bc||^2+||bd||^2=1$.
+
+. . .
+
+- For example:
+  \begin{equation*}
+  \phase{\sqrtt}{\sqrtt} \otimes \phase{\sqrtt}{\sqrtt} = 
+\pmat{\frac{1}{2}\\\frac{1}{2}\\\frac{1}{2}\\\frac{1}{2}} ; \quad  
+\left|\left|\frac{1}{2}\right|\right|^2 = \frac{1}{4}; \quad 
+\frac{1}{4}+\frac{1}{4}+\frac{1}{4}+\frac{1}{4} = 1
+  \end{equation*}
+
+. . .
+
+  $\rightarrow$ There's an equal chance ($25\%$) of measuring $\ket{00}$, 
+  $\ket{01}$, $\ket{10}$, $\ket{11}$.
+
+## Operations on qubits
+
+- We operate on qubits in the same way as on cbits: with matrices.
+
+- All the operations we saw so far (bit flip, CNOT, etc...) work on qubits as 
+  well.
+
+- In reality, the matrix operations model some device that manipulates the real 
+  qubits \alert{without measurement}. 
+
+- Some gates only make sense in the quantum context...
+
+## The Hadamard gate
+
+- The Hadaramd gate puts a $\ket{0}$ or $\ket{1}$ bit into exact
+  superposition: $H\ket{0} = \sqrtt\left(\ket{0}+\ket{1}\right)$ and $H\ket{1} 
+  = \sqrtt\left(\ket{0}-\ket{1}\right)$.
+
+. . .
+
+\begin{equation*}
+H = \pmat{\sqrtt & \sqrtt \\ \sqrtt & -\sqrtt}
+\end{equation*}
+
+. . .
+
+- Note that $H^2 = HH = \bf{1}$ so $H^2\ket{0} = \ket{0}$ and $H^2\ket{1} = 
+  \ket{1}$.
+
+. . .
+
+- This allows us to get out of superposition without measurement! So we can 
+  structure computations deterministically.
+
+
