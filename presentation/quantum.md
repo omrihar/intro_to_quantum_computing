@@ -28,6 +28,9 @@ header-includes: |
    \newcommand{\phase}[2]{\begin{pmatrix}#1 \\ #2 \end{pmatrix}}
    \newcommand{\pmat}[1]{\begin{pmatrix}#1\end{pmatrix}}
    \newcommand{\sqrtt}{\frac{1}{\sqrt{2}}}
+   \newcommand{\half}{\frac{1}{2}}
+   \newcommand{\Had}{\pmat{\sqrtt & \sqrtt \\ \sqrtt & -\sqrtt}}
+   \newcommand{\NotGate}{\pmat{0 & 1 \\ 1 & 0}}
    \setlength{\tabcolsep}{15pt}
    \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
    \newcommand{\rawalert}[1]{{\usebeamercolor[fg]{alerted text} #1}}
@@ -43,14 +46,6 @@ themeoptions:
 ## _Ce n'est pas un lustre_ (This is not a Chandelier)
 
 ![IBM Q](images/ibm_q.jpg)
-
-::: notes
-
-- What the hell is QC?
-- What have you heard about it so far?
-- What do you know about QC?
-
-:::
 
 ## Big big picture
 
@@ -72,13 +67,17 @@ themeoptions:
 
 ## Disclaimer
 
+::: incremental
+
+- Quantum Mechanics is technical
+
+- Quantum Mechanics is weird
+
 - Quantum Computing is technical
 
 - Quantum Algorithms are hard
 
-- Quantum Mechanics is weird
-
-- Quantum Mechanics is technical
+:::
 
 ##
 
@@ -89,21 +88,24 @@ themeoptions:
 ## Example: the RSA algorithm
 
 \begin{center}
+\only<1>{\Huge Breaking the RSA algorithm}
+\end{center}
+\begin{center}
 \begin{tikzpicture}[ampersand replacement=\&, font=\small]
-\uncover<1->{\node[alice,female,minimum size=1.5cm] (A) {Alice};}
-\uncover<2->{\node[bob,right=3cm of A,minimum size=1.5cm,mirrored] (B) {Bob};}
-\uncover<3-4>{\draw (A.east) edge[->]  node[above] {"Hello Bob"} (B.west);}
-\uncover<4>{\node[devil, right of=A,minimum size=1.5cm, below=1cm of A] 
+\uncover<2->{\node[alice,female,minimum size=1.5cm] (A) {Alice};}
+\uncover<3->{\node[bob,right=3cm of A,minimum size=1.5cm,mirrored] (B) {Bob};}
+\uncover<4-5>{\draw (A.east) edge[->]  node[above] {"Hello Bob"} (B.west);}
+\uncover<5>{\node[devil, right of=A,minimum size=1.5cm, below=1cm of A] 
 (C){Devil};}
-\uncover<5-6>{\draw (B.270) ++ (0, -1.0) node {\makecell{Generate 
+\uncover<6-7>{\draw (B.270) ++ (0, -1.0) node {\makecell{Generate 
 Public/Private keys\\$e$, $d$, $N=pq$}};}
-\uncover<6>{\draw (A.east) edge[<-]  node[above] {"Public Key: $e$, $N$"} 
+\uncover<7>{\draw (A.east) edge[<-]  node[above] {"Public Key: $e$, $N$"} 
 (B.west);}
-\uncover<7->{\draw (A.270) ++(0, -1.0) node 
-{\makecell{$m=\mathrm{encode}(\text{"Hello World"})$\\$c = m^e\mod{N}$}};}
-\uncover<8->{\draw (A.east) edge[->] node[above] {$c$} (B.west);}
-\uncover<9->{\draw (B.270) ++(0, -1.0) node {\makecell{$m = 
-c^d\mod{N}$\\$\mathrm{decode}(m)$}} ;}
+\uncover<8->{\draw (A.270) ++(0, -1.0) node 
+{\makecell{$m=\mathrm{encode}(\text{"Hello World"})$\\$c = m^e\Mod{N}$}};}
+\uncover<9->{\draw (A.east) edge[->] node[above] {$c$} (B.west);}
+\uncover<10->{\draw (B.270) ++(0, -1.0) node {\makecell{$m = 
+c^d\Mod{N}$\\$\mathrm{decode}(m)$}} ;}
 \end{tikzpicture}
 \end{center}
 
@@ -166,42 +168,6 @@ bits.}
 \end{center}
 
 Would require $\sim 4000$ qubits to break $2048$-bit RSA
-
-## Basics of Quantum Mechanics (simplified)
-
-::: incremental
-
-- The system is in a state ($\psi(t) = \ket{\psi}$).
-
-- The state can be a superposition of \alert{measureable} states (e.g. 
-  $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$).
-
-\only<2>{
-\begin{center}
-\begin{tikzpicture}
-    \draw [<->] (0,2) -- (0, 0) -- (2, 0);
-    \node at (2, -0.3) {$\ket{0}$};
-    \node at (-0.3, 2) {$\ket{1}$};
-    \draw [->,thick] (0, 0) -- (45:1);
-    \draw [->,thick] (0, 0) -- (0, 1);
-    \draw [->,thick] (0, 0) -- (1, 0);
-    \node[anchor=south west] at (70:0.8) {\scalebox{0.7}{ 
-        $\ket{\psi}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$}};
-\end{tikzpicture}
-\end{center}
-}
-
-- The time evolution of the state is \alert{reversible}.
-
-- When you measure the system, the result is probabilistic (e.g. probability of 
-  measuring $0$ is $\alpha^2$ and $1$ is $\beta^2$).
-
-- After the measurement, the state \alert{collapses} to the measured outcome 
-  ($\ket{0}$ or $\ket{1}$).
-
-- It is impossible to clone the state of the system (no-cloning theorem).
-
-:::
 
 # Movie
 
@@ -277,6 +243,10 @@ $\pmat{a & b \\ c & d}\pmat{x\\y} = \pmat{ax + by \\ cx + dy}$}
 
 ## Operations on one classical bit (cbit)
 
+\only<1>{\huge What are the operations we can perform on one classical bit?}
+
+
+\only<2->{
 \begin{tabular}{l c c c}
 Identity & $f(x) = x$ & \scalebox{0.6}{$\pmat{1 & 0 \\ 0 & 1}\pmat{1 \\ 
 0}=\pmat{1 \\ 0}$} & \scalebox{0.6}{$\pmat{1 & 0 \\ 0 & 1}\pmat{0 \\ 1}= 
@@ -294,7 +264,7 @@ Constant-1 & $f(x) = 1$ & \scalebox{0.6}{$\pmat{0 & 0 \\ 1 & 1}\pmat{1 \\
 0}=\pmat{0 \\ 1}$} & \scalebox{0.6}{$\pmat{0 & 0 \\ 1 & 1}\pmat{0 \\ 1}= 
 \pmat{0 \\ 1}$} \\
 \end{tabular}
-
+}
 
 ## Reversible computing
 
@@ -404,8 +374,8 @@ width=2em]
 
    \uncover<3->{\draw[->] (m-1-1) -- (m-1-2);}
    \uncover<4->{\draw[->] (m-2-1) -- (m-2-2);}
-   \uncover<5->{\draw[red,->] (m-3-1) -- (m-4-2);}
-   \uncover<6->{\draw[red,->] (m-4-1) -- (m-3-2);}
+   \uncover<5->{\draw[mLightBrown,->] (m-3-1) -- (m-4-2);}
+   \uncover<6->{\draw[mLightBrown,->] (m-4-1) -- (m-3-2);}
 \end{tikzpicture}
 
 :::
@@ -468,7 +438,26 @@ width=2em]
 The qubit is in a state of both $\ket{0}$ and $\ket{1}$. We can write this as:
 
 \scalebox{0.8}{$\pmat{a\\b} = a\zero + b\one = a\ket{0} + b\ket{1}.$}
+
+\only<3>{
+\begin{center}
+\usetikzlibrary{arrows.meta}
+\begin{tikzpicture}
+    \draw [<->] (0,2) -- (0, 0) -- (2, 0);
+    \node at (2, -0.3) {$\ket{0}$};
+    \node at (-0.3, 2) {$\ket{1}$};
+    \draw [-Triangle,very thick] (0, 0) -- (45:1);
+    \draw [-Triangle,very thick] (0, 0) -- (0, 1);
+    \draw [-Triangle,very thick] (0, 0) -- (1, 0);
+    \node[anchor=south west] at (70:0.8) {\scalebox{0.7}{ 
+        $\ket{\psi}=\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})$}};
+\end{tikzpicture}
+\end{center}
+}
+
 \end{block}
+
+. . .
 
 . . .
 
@@ -499,6 +488,7 @@ $\ket{0}$, and \scalebox{0.7}{$\one$} has a $100\%$ chance of collapsing to
 $\ket{1}$.
 
 \end{exampleblock}
+
 
 ## Qubits and Superposition
 
@@ -555,4 +545,571 @@ H = \pmat{\sqrtt & \sqrtt \\ \sqrtt & -\sqrtt}
 - This allows us to get out of superposition without measurement! So we can 
   structure computations deterministically.
 
+##
+
+\Huge The Deutsch Oracle
+
+## The Deutsch oracle
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0,0) -- (6, 0);
+\draw [color=mLightBrown,fill=white] (2, -.5) rectangle (4,.5) 
+node[midway]{Black Box};
+\draw (0, 0) node [anchor=east] {Input};
+\draw (6, 0) node [anchor=west] {Output};
+\end{tikzpicture}
+\end{center}
+
+::: incremental
+
+- The \alert{Black Box} is a deterministic function of one bit.
+
+- You can give it whatever input you want, and observe the output.
+
+- How many queries do you need to determine the function on classical computer?
+
+- And on a quantum computer?
+
+:::
+
+## The Deutsch oracle
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0,0) -- (6, 0);
+\draw [color=mLightBrown,fill=white] (2, -.5) rectangle (4,.5) 
+node[midway]{Black Box};
+\draw (0, 0) node [anchor=east] {Input};
+\draw (6, 0) node [anchor=west] {Output};
+\end{tikzpicture}
+\end{center}
+
+::: incremental
+
+- What if we want to determine whether the function is constant or variable?
+
+- How many queries on a classical computer?
+
+- And on a quantum computer?
+
+:::
+
+## The Deutsch oracle
+
+\textbf{Problem:} the `constant-0` and `constant-1` functions are 
+\alert{non-reversible}. Before we can continue, we have to write them in a 
+reversible way:
+
+. . .
+
+::::: {.columns}
+::: {.column width=50%}
+
+### Before:
+
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, 0) -- (3, 0);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+\draw (0, 0) node [anchor=east] {Input};
+\draw (3, 0) node [anchor=west] {Output};
+\draw (0, 0) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, 0) node [anchor=south west] {\scalebox{0.8}{$f(\ket{x})$}};
+\end{tikzpicture}
+
+:::
+::: {.column width=50%}
+
+. . .
+
+### After:
+
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, -.5) -- (3, -.5);
+\draw [color=mLightBrown, ->] (0, 0.5) -- (3, 0.5);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+
+\draw (0, 0.5) node [anchor=east] {Output};
+\draw (0, -0.5) node[anchor=east] {Input};
+\draw (3, 0.5) node [anchor=west] {Output'};
+\draw (3, -0.5) node [anchor=west] {Input'};
+
+\draw (0, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\draw (0, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, .5) node [anchor=south west] {\scalebox{0.8}{$f(\ket{x})$}};
+\end{tikzpicture}
+
+:::
+::::
+
+. . .
+
+The black box leaves the \alert{input qubit} unchanged, writing the output of 
+the function to the \alert{output qubit}.
+
+## The Deutsch oracle: `constant-0`
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, -.5) -- (3, -.5);
+\draw [color=mLightBrown, ->] (0, 0.5) -- (3, 0.5);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+
+\draw (0, 0.5) node [anchor=east] {Output};
+\draw (0, -0.5) node[anchor=east] {Input};
+\draw (3, 0.5) node [anchor=west] {Output'};
+\draw (3, -0.5) node [anchor=west] {Input'};
+
+\draw (0, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\draw (0, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\end{tikzpicture}
+\end{center}
+
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (8, 0);
+\draw [color=mLightBrown] (0, -1) -- (8, -1);
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (8, 0) node [anchor=west,color=white] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\end{tikzpicture}
+\end{center}
+
+## The Deutsch oracle: `constant-1`
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, -.5) -- (3, -.5);
+\draw [color=mLightBrown, ->] (0, 0.5) -- (3, 0.5);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+
+\draw (0, 0.5) node [anchor=east] {Output};
+\draw (0, -0.5) node[anchor=east] {Input};
+\draw (3, 0.5) node [anchor=west] {Output'};
+\draw (3, -0.5) node [anchor=west] {Input'};
+
+\draw (0, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\draw (0, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+
+\draw (2, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{1}$}};
+\draw (2, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\end{tikzpicture}
+\end{center}
+
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (8, 0);
+\draw [color=mLightBrown] (0, -1) -- (8, -1);
+
+\draw [fill=red,draw=mLightBrown] (3.7, -.3) rectangle (4.3, .3) 
+node[midway,color=white]{X};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (8, 0) node [anchor=west,color=white] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\end{tikzpicture}
+\end{center}
+
+## The Deutsch oracle: identity
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, -.5) -- (3, -.5);
+\draw [color=mLightBrown, ->] (0, 0.5) -- (3, 0.5);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+
+\draw (0, 0.5) node [anchor=east] {Output};
+\draw (0, -0.5) node[anchor=east] {Input};
+\draw (3, 0.5) node [anchor=west] {Output'};
+\draw (3, -0.5) node [anchor=west] {Input'};
+
+\draw (0, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\draw (0, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+
+\draw (2, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\draw (2, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\end{tikzpicture}
+\end{center}
+
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (8, 0);
+\draw [color=mLightBrown] (0, -1) -- (8, -1);
+
+\draw [draw=mLightBrown] (4, 0) circle (.2);
+\draw [color=mLightBrown] (4, -1) -- (4, .2);
+\filldraw[fill=mLightBrown, draw=mLightBrown] (4, -1) circle (.1);
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (8, 0) node [anchor=west,color=white] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\end{tikzpicture}
+\end{center}
+
+## The Deutsch oracle: negation
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown, ->] (0, -.5) -- (3, -.5);
+\draw [color=mLightBrown, ->] (0, 0.5) -- (3, 0.5);
+\draw [color=mLightBrown, fill=white] (1, -1.5) rectangle (2, 1.5) 
+node[midway]{BB};
+
+\draw (0, 0.5) node [anchor=east] {Output};
+\draw (0, -0.5) node[anchor=east] {Input};
+\draw (3, 0.5) node [anchor=west] {Output'};
+\draw (3, -0.5) node [anchor=west] {Input'};
+
+\draw (0, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{0}$}};
+\draw (0, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+
+\draw (2, .5) node [anchor=south west] {\scalebox{0.8}{$\ket{\neg x}$}};
+\draw (2, -.5) node [anchor=south west] {\scalebox{0.8}{$\ket{x}$}};
+\end{tikzpicture}
+\end{center}
+
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (8, 0);
+\draw [color=mLightBrown] (0, -1) -- (8, -1);
+
+\draw [draw=mLightBrown] (2.5, 0) circle (.2);
+\draw [color=mLightBrown] (2.5, -1) -- (2.5, .2);
+\filldraw[fill=mLightBrown, draw=mLightBrown] (2.5, -1) circle (.1);
+
+\draw [fill=red,draw=mLightBrown] (5.2, -.3) rectangle (5.8, .3) 
+node[midway,color=white]{X};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (8, 0) node [anchor=west,color=white] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\end{tikzpicture}
+\end{center}
+
+## The Deutsch oracle: solution
+
+- So how do we solve the problem in one operation?
+
+. . .
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (6.5, 0);
+\draw [color=mLightBrown] (0, -1) -- (6.5, -1);
+
+\draw [fill=red,draw=mLightBrown] (1.5, -.3) rectangle (2.1, .3) 
+node[midway,color=white]{X};
+\draw [fill=red,draw=mLightBrown] (1.5, -1.3) rectangle (2.1, -.7) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -.3) rectangle (3.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -1.3) rectangle (3.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (3.5, -1.3) rectangle (4.1, .3) node 
+[midway] {BB};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -.3) rectangle (5.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -1.3) rectangle (5.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (5.5, -.3) rectangle (6.1, .3) 
+node[midway]{M};
+\draw [fill=white,draw=mLightBrown] (5.5, -1.3) rectangle (6.1, -.7) 
+node[midway]{M};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+\end{center}
+
+. . .
+
+- If the black-box function is constant, we will measure $\ket{11}$.
+- If the black-box function is variable, we will measure $\ket{01}$.
+
+## The Deutsch oracle: check for `constant-0`
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (6.5, 0);
+\draw [color=mLightBrown] (0, -1) -- (6.5, -1);
+
+\draw [fill=red,draw=mLightBrown] (1.5, -.3) rectangle (2.1, .3) 
+node[midway,color=white]{X};
+\draw [fill=red,draw=mLightBrown] (1.5, -1.3) rectangle (2.1, -.7) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -.3) rectangle (3.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -1.3) rectangle (3.1, -.7) 
+node[midway,color=white]{H};
+
+
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -.3) rectangle (5.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -1.3) rectangle (5.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (5.5, -.3) rectangle (6.1, .3) 
+node[midway]{M};
+\draw [fill=white,draw=mLightBrown] (5.5, -1.3) rectangle (6.1, -.7) 
+node[midway]{M};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+\end{center}
+
+\begin{align*}
+\text{Output'} = \Had\Had\NotGate\zero = \one
+\end{align*}
+
+\begin{align*}
+\text{Input'} = \Had\Had\NotGate\zero = \one
+\end{align*}
+
+Output is $\ket{11}$.
+
+## The Deutsch oracle: check for `constant-1`
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (6.5, 0);
+\draw [color=mLightBrown] (0, -1) -- (6.5, -1);
+
+\draw [fill=red,draw=mLightBrown] (1.5, -.3) rectangle (2.1, .3) 
+node[midway,color=white]{X};
+\draw [fill=red,draw=mLightBrown] (1.5, -1.3) rectangle (2.1, -.7) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -.3) rectangle (3.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -1.3) rectangle (3.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=red,draw=mLightBrown] (3.5, -.3) rectangle (4.1, .3) node 
+[midway,color=white] {X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -.3) rectangle (5.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -1.3) rectangle (5.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (5.5, -.3) rectangle (6.1, .3) 
+node[midway]{M};
+\draw [fill=white,draw=mLightBrown] (5.5, -1.3) rectangle (6.1, -.7) 
+node[midway]{M};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+\end{center}
+
+\begin{align*}
+\text{Output'} = \Had\NotGate\Had\NotGate\zero = \one
+\end{align*}
+
+\begin{align*}
+\text{Input'} = \NotGate\Had\Had\zero = \one
+\end{align*}
+
+Output is $\ket{11}$.
+
+
+## The Deutsch oracle: check for the identity
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (6.5, 0);
+\draw [color=mLightBrown] (0, -1) -- (6.5, -1);
+
+\draw [fill=red,draw=mLightBrown] (1.5, -.3) rectangle (2.1, .3) 
+node[midway,color=white]{X};
+\draw [fill=red,draw=mLightBrown] (1.5, -1.3) rectangle (2.1, -.7) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -.3) rectangle (3.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -1.3) rectangle (3.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [draw=mLightBrown] (3.8, 0) circle (.2);
+\draw [color=mLightBrown] (3.8, -1) -- (3.8, .2);
+\filldraw[fill=mLightBrown, draw=mLightBrown] (3.8, -1) circle (.1);
+
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -.3) rectangle (5.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (4.5, -1.3) rectangle (5.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (5.5, -.3) rectangle (6.1, .3) 
+node[midway]{M};
+\draw [fill=white,draw=mLightBrown] (5.5, -1.3) rectangle (6.1, -.7) 
+node[midway]{M};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+\end{center}
+
+\scalebox{0.8}{$
+C\left(\pmat{\sqrtt \\ -\sqrtt} \otimes \pmat{\sqrtt \\ -\sqrtt}\right) = 
+C\pmat{\half \\ -\half \\ -\half \\ \half} = \half \cnot \pmat{1 \\ -1 \\ -1 \\ 
+1} = \half \pmat{1 \\ -1 \\ 1 \\ -1}
+$}
+\scalebox{0.8}{$= \pmat{\sqrtt\\\sqrtt}\otimes\pmat{\sqrtt\\-\sqrtt}$}
+
+Output (after applying Hadamard gate): $\ket{01}$.
+
+## The Deutsch oracle: check for negation
+
+\begin{center}
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (7.5, 0);
+\draw [color=mLightBrown] (0, -1) -- (7.5, -1);
+
+\draw [fill=red,draw=mLightBrown] (1.5, -.3) rectangle (2.1, .3) 
+node[midway,color=white]{X};
+\draw [fill=red,draw=mLightBrown] (1.5, -1.3) rectangle (2.1, -.7) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -.3) rectangle (3.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (2.5, -1.3) rectangle (3.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [draw=mLightBrown] (3.8, 0) circle (.2);
+\draw [color=mLightBrown] (3.8, -1) -- (3.8, .2);
+\filldraw[fill=mLightBrown, draw=mLightBrown] (3.8, -1) circle (.1);
+
+\draw [fill=red,draw=mLightBrown] (4.5, -.3) rectangle (5.1, .3) 
+node[midway,color=white]{X};
+
+\draw [fill=mLightBrown,draw=mLightBrown] (5.5, -.3) rectangle (6.1, .3) 
+node[midway,color=white]{H};
+\draw [fill=mLightBrown,draw=mLightBrown] (5.5, -1.3) rectangle (6.1, -.7) 
+node[midway,color=white]{H};
+
+\draw [fill=white,draw=mLightBrown] (6.5, -.3) rectangle (7.1, .3) 
+node[midway]{M};
+\draw [fill=white,draw=mLightBrown] (6.5, -1.3) rectangle (7.1, -.7) 
+node[midway]{M};
+
+\draw (0, 0) node [anchor=east] {Output};
+\draw (0, -1) node [anchor=east] {Input};
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\Huge Left as an exercise :)
+\end{center}
+
+Output: $\ket{01}$.
+
+## The Deutsch oracle
+
+- We managed to determine whether the function is constant in one query!
+
+- We magnified the difference between categories (CNOT gate) and neutralized 
+  the difference within the categories (NOT gate).
+
+- There is a generalization of this to $n$-bit black boxes (Deutsch-Josza 
+  problem).
+
+- It was an inspiration for Shor's algorithm!
+
+# Bonus Topic - Quantum Entanglement
+
+## Quantum entanglement
+
+- If the product state of two qubits cannot be factored, they are said to be 
+  \alert{entangled}
+
+:::: {.columns}
+::: {.column width=50%}
+
+\begin{equation*}
+\pmat{\sqrtt\\0\\0\\\sqrtt} = \pmat{a\\b}\otimes\pmat{c\\d}
+\end{equation*}
+
+:::
+::: {.column width=50%}
+\begin{align*}
+ac &= \sqrtt \\
+ad &= 0 \\
+bc &= 0 \\
+bd &= \sqrtt
+\end{align*}
+:::
+::::
+
+- The system of equations has no solution, so we cannot factor the quantum 
+  state.
+
+- This state has a $50\%$ chance of collapsing to $\ket{00}$ and $50\%$ chance 
+  of collapsing to $\ket{11}$.
+
+## Quantum entanglement
+
+To reach an entangled state is quite simple:
+
+\begin{tikzpicture}
+\draw [color=mLightBrown] (0, 0) -- (4, 0);
+\draw [color=mLightBrown] (0, -1) -- (4, -1);
+
+\draw [draw=mLightBrown] (3, 0) circle (.2);
+\draw [color=mLightBrown] (3, -1) -- (3, .2);
+\filldraw[fill=mLightBrown, draw=mLightBrown] (3, -1) circle (.1);
+
+\draw [fill=mLightBrown,draw=mLightBrown] (1.4, -1.3) rectangle (2, -.7) 
+node[midway,color=white]{H};
+
+\draw (0, 0) node [anchor=south west] {$\ket{0}$};
+\draw (0, -1) node [anchor=south west] {$\ket{0}$};
+\end{tikzpicture}
+
+\scalebox{0.8}{$
+CH_1\left(\zero\otimes\zero\right) = C\left(\pmat{\sqrtt\\\sqrtt} 
+\otimes\zero\right) = \cnot\pmat{\sqrtt\\0\sqrtt\\0} = 
+\pmat{\sqrtt\\0\\0\\\sqrtt}
+$}
+
+## Quantum entanglement - consequences
+
+- The qubits are forced to be equal (both are either $0$ or $1$)!
+
+- If we measure one of them, the state of the other will collapse to be equal 
+  to the one we measured.
+
+- This can happen even if they are very very far away from each other!
+
+- The value is \alert{not predetermined}.
+
+- We cannot use this to transmit information, however.
 
