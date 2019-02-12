@@ -185,7 +185,7 @@ Would require $\sim 4000$ qubits to break $2048$-bit RSA
 
 - Simplest problem where a quantum computer outperforms a classical one
 
-- Bonus: Quantum entanglement and quantum teleportation
+- Bonus: Quantum entanglement
 
 ## Representing classical bits as vectors
 
@@ -429,7 +429,7 @@ width=2em]
 
 ## Qubits and superposition 
 
-### What does that mean?
+What does that mean?
 
 . . .
 
